@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos - MF0953_2 Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .resource-link { transition: all 0.2s ease; }
+        .resource-link:hover { transform: translateX(5px); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold gradient-text">
+                            <i class="fas fa-microchip mr-2"></i>
+                            MF0953_2 Test
+                        </h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-home mr-1"></i>Inicio
+                    </a>
+                    <a href="estadisticas.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-chart-bar mr-1"></i>Estadísticas
+                    </a>
+                    <a href="#" class="text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-book mr-1"></i>Recursos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold gradient-text mb-4">
+                    Recursos de Aprendizaje
+                </h1>
+                <p class="text-xl text-gray-600">
+                    Material complementario para tu preparación en MF0953_2
+                </p>
+            </div>
+
+            <!-- Quick Access -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 text-white card-hover">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Comenzar Test</h3>
+                        <p class="text-blue-100 mb-4">Inicia tu sesión de práctica inmediatamente</p>
+                        <a href="index.html" class="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                            Empezar Ahora
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-xl shadow-lg p-6 text-white card-hover">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Ver Estadísticas</h3>
+                        <p class="text-green-100 mb-4">Analiza tu progreso y áreas de mejora</p>
+                        <a href="estadisticas.html" class="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+                            Ver Progreso
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl shadow-lg p-6 text-white card-hover">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Descargar Guía</h3>
+                        <p class="text-purple-100 mb-4">Obtén la guía completa en PDF</p>
+                        <button onclick="downloadGuide()" class="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-purple-50 transition-colors">
+                            Descargar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Resources -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- Official Documentation -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold gradient-text mb-6">
+                        <i class="fas fa-file-alt mr-2"></i>
+                        Documentación Oficial
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <a href="https://sede.sepe.gob.es/especialidadesformativas/RXBuscadorEFRED/DetalleEspecialidad.do?metodo=modulada&codEspecialidad=IFCT0309" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-external-link-alt text-indigo-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">SEPE - Especialidad Formativa</h3>
+                                <p class="text-sm text-gray-600">Información oficial del certificado IFCT0309</p>
+                            </div>
+                        </a>
+
+                        <a href="https://incual.educacion.gob.es/documents/20195/94271/IFC298_2_RV+-+Q_Documento+publicado/9476bd61-79cd-4bda-870a-d338cb7b6029" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-file-pdf text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">INCUAL - Documento Oficial</h3>
+                                <p class="text-sm text-gray-600">Documento de referencia del certificado</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Learning Platforms -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold gradient-text mb-6">
+                        <i class="fas fa-graduation-cap mr-2"></i>
+                        Plataformas de Formación
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <a href="https://www.euroinnova.com/mf0953_2-montaje-de-equipos-microinformaticos-online" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-laptop text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">Euroinnova</h3>
+                                <p class="text-sm text-gray-600">Curso online MF0953_2 con temario completo</p>
+                            </div>
+                        </a>
+
+                        <a href="https://edu.tauformar.com/cursos/montaje-y-reparacion-de-sistemas-microinformaticos/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-tools text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">TauFormar</h3>
+                                <p class="text-sm text-gray-600">Curso de montaje y reparación de sistemas</p>
+                            </div>
+                        </a>
+
+                        <a href="https://aula10formacion.com/curso/certificado-en-montaje-y-reparacion-de-sistemas-microinformaticos-ifct0309/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-certificate text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">Aula 10 Formación</h3>
+                                <p class="text-sm text-gray-600">Certificado en montaje y reparación IFCT0309</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Resources -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- Hardware Guides -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold gradient-text mb-6">
+                        <i class="fas fa-microchip mr-2"></i>
+                        Guías de Hardware
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <a href="https://www.pcbasic.com/es/blog/what_does_a_motherboard_do.html" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-circuit-board text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">PCBasic - Placas Base</h3>
+                                <p class="text-sm text-gray-600">Guía completa sobre funciones y componentes</p>
+                            </div>
+                        </a>
+
+                        <a href="https://hardzone.es/tutoriales/componentes/puertos-placa-base/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-usb text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">HardZone - Puertos y Conectores</h3>
+                                <p class="text-sm text-gray-600">Tutorial detallado sobre conectores internos</p>
+                            </div>
+                        </a>
+
+                        <a href="https://grupoindustronic.com/potencia-tu-pc-guia-sobre-fuentes-de-poder-para-pc/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-bolt text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">Industronic - Fuentes de Poder</h3>
+                                <p class="text-sm text-gray-600">Guía completa sobre PSU y especificaciones</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Cooling Systems -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold gradient-text mb-6">
+                        <i class="fas fa-snowflake mr-2"></i>
+                        Sistemas de Refrigeración
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <a href="https://www.eniun.com/sistemas-de-refrigeracion-ordenador/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-fan text-cyan-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">Eniun - Sistemas de Refrigeración</h3>
+                                <p class="text-sm text-gray-600">Guía completa sobre métodos de enfriamiento</p>
+                            </div>
+                        </a>
+
+                        <a href="https://clonesyperifericos.com/tipos-de-refrigeracion-para-usar-pc-gamer-para-que-sirven-y-cuando-usarlas/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-water text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">Clones y Periféricos - Tipos de Refrigeración</h3>
+                                <p class="text-sm text-gray-600">Comparativa de métodos de enfriamiento</p>
+                            </div>
+                        </a>
+
+                        <a href="https://www.coolmod.com/blog/categorias/componentes/tipos-de-fuente-de-alimentacion-para-pc/" 
+                           target="_blank" 
+                           class="resource-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-power-off text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-gray-900">Coolmod - Tipos de Fuentes</h3>
+                                <p class="text-sm text-gray-600">Guía sobre tipos y especificaciones de PSU</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Tips -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg p-8 text-white mb-12">
+                <h2 class="text-2xl font-bold mb-6">
+                    <i class="fas fa-lightbulb mr-2"></i>
+                    Consejos de Estudio
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-green-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Practica Regularmente</h3>
+                                <p class="text-indigo-100 text-sm">Realiza tests frecuentes para reforzar el conocimiento</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-clock text-yellow-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Gestiona el Tiempo</h3>
+                                <p class="text-indigo-100 text-sm">Practica con límite de tiempo para mejorar velocidad</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-book text-blue-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Revisa Fuentes</h3>
+                                <p class="text-indigo-100 text-sm">Consulta las fuentes para respuestas detalladas</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-chart-bar text-purple-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Analiza Progreso</h3>
+                                <p class="text-indigo-100 text-sm">Identifica áreas débiles y enfócate en ellas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Support -->
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                <h2 class="text-2xl font-bold gradient-text mb-4">
+                    <i class="fas fa-question-circle mr-2"></i>
+                    ¿Necesitas Ayuda?
+                </h2>
+                <p class="text-gray-600 mb-6">
+                    Si tienes dudas sobre el contenido o encuentras errores en las preguntas, 
+                    no dudes en contactarnos.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="showContactForm()" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-colors">
+                        <i class="fas fa-envelope mr-2"></i>Contactar Soporte
+                    </button>
+                    <button onclick="reportError()" class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-red-600 hover:to-pink-700 transition-colors">
+                        <i class="fas fa-bug mr-2"></i>Reportar Error
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p class="text-gray-600">
+                    © 2024 MF0953_2 Test Application. Desarrollado para la certificación en Montaje de Equipos Microinformáticos.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="recursos.js"></script>
+</body>
+</html>

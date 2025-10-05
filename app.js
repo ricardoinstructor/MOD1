@@ -1,0 +1,542 @@
+// Aplicación principal del test MF0953_2
+class TestApplication {
+    constructor() {
+        this.questions = [];
+        this.currentQuestionIndex = 0;
+        this.userAnswers = [];
+        this.markedQuestions = [];
+        this.testMode = 'test'; // 'test' o 'practice'
+        this.testStarted = false;
+        this.testCompleted = false;
+        
+        this.initializeElements();
+        this.bindEvents();
+        this.loadInitialState();
+    }
+
+    initializeElements() {
+        // Botones principales
+        this.startTestBtn = document.getElementById('startTest');
+        this.practiceModeBtn = document.getElementById('practiceMode');
+        
+        // Interfaces
+        this.testInterface = document.getElementById('testInterface');
+        this.resultsInterface = document.getElementById('resultsInterface');
+        this.reviewInterface = document.getElementById('reviewInterface');
+        
+        // Elementos del test
+        this.currentQuestionSpan = document.getElementById('currentQuestion');
+        this.totalQuestionsSpan = document.getElementById('totalQuestions');
+        this.progressBar = document.getElementById('progressBar');
+        this.questionText = document.getElementById('questionText');
+        this.optionsContainer = document.getElementById('optionsContainer');
+        
+        // Botones de navegación
+        this.prevBtn = document.getElementById('prevBtn');
+        this.nextBtn = document.getElementById('nextBtn');
+        this.markBtn = document.getElementById('markBtn');
+        
+        // Elementos de resultados
+        this.correctAnswersSpan = document.getElementById('correctAnswers');
+        this.incorrectAnswersSpan = document.getElementById('incorrectAnswers');
+        this.finalScoreSpan = document.getElementById('finalScore');
+        
+        // Botones de resultados
+        this.reviewAnswersBtn = document.getElementById('reviewAnswers');
+        this.restartTestBtn = document.getElementById('restartTest');
+        this.backToResultsBtn = document.getElementById('backToResults');
+        
+        // Contenedores de revisión
+        this.reviewContainer = document.getElementById('reviewContainer');
+    }
+
+    bindEvents() {
+        this.startTestBtn.addEventListener('click', () => this.startTest('test'));
+        this.practiceModeBtn.addEventListener('click', () => this.startTest('practice'));
+        this.prevBtn.addEventListener('click', () => this.previousQuestion());
+        this.nextBtn.addEventListener('click', () => this.nextQuestion());
+        this.markBtn.addEventListener('click', () => this.toggleMarkQuestion());
+        this.reviewAnswersBtn.addEventListener('click', () => this.showReview());
+        this.restartTestBtn.addEventListener('click', () => this.resetTest());
+        this.backToResultsBtn.addEventListener('click', () => this.showResults());
+    }
+
+    loadInitialState() {
+        // Cargar estado guardado si existe
+        const savedState = localStorage.getItem('testState');
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (state.testStarted && !state.testCompleted) {
+                    this.resumeTest(state);
+                }
+            } catch (e) {
+                console.warn('Error al cargar el estado guardado:', e);
+            }
+        }
+    }
+
+    startTest(mode = 'test') {
+        this.testMode = mode;
+        this.testStarted = true;
+        this.testCompleted = false;
+        this.currentQuestionIndex = 0;
+        this.userAnswers = [];
+        this.markedQuestions = [];
+        
+        // Cargar preguntas
+        if (mode === 'test') {
+            this.questions = generateRandomTest(200);
+        } else {
+            this.questions = questionsDatabase; // Todas las preguntas para práctica
+        }
+        
+        // Inicializar respuestas del usuario
+        this.userAnswers = new Array(this.questions.length).fill(null);
+        
+        // Mostrar interfaz del test
+        this.showTestInterface();
+        this.loadQuestion();
+        this.saveState();
+        
+        // Animación de inicio
+        anime({
+            targets: this.testInterface,
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 500,
+            easing: 'easeOutQuad'
+        });
+    }
+
+    showTestInterface() {
+        this.testInterface.classList.remove('hidden');
+        this.resultsInterface.classList.add('hidden');
+        this.reviewInterface.classList.add('hidden');
+        
+        this.totalQuestionsSpan.textContent = this.questions.length;
+        this.updateProgress();
+    }
+
+    loadQuestion() {
+        const question = this.questions[this.currentQuestionIndex];
+        
+        // Actualizar información de progreso
+        this.currentQuestionSpan.textContent = this.currentQuestionIndex + 1;
+        this.updateProgress();
+        
+        // Cargar texto de la pregunta
+        this.questionText.textContent = question.question;
+        
+        // Limpiar opciones anteriores
+        this.optionsContainer.innerHTML = '';
+        
+        // Crear opciones
+        question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-button w-full text-left p-4 rounded-lg border-2 border-gray-200 hover:border-indigo-500 transition-all duration-200';
+            button.textContent = `${String.fromCharCode(65 + index)}) ${option}`;
+            button.addEventListener('click', () => this.selectOption(index));
+            
+            // Marcar opción seleccionada previamente
+            if (this.userAnswers[this.currentQuestionIndex] === index) {
+                button.classList.add('selected');
+            }
+            
+            this.optionsContainer.appendChild(button);
+        });
+        
+        // Actualizar botones de navegación
+        this.updateNavigationButtons();
+        
+        // Actualizar botón de marcar
+        this.updateMarkButton();
+        
+        // Animación de carga de pregunta
+        anime({
+            targets: this.questionText,
+            opacity: [0, 1],
+            translateX: [20, 0],
+            duration: 300,
+            easing: 'easeOutQuad'
+        });
+        
+        anime({
+            targets: '.option-button',
+            opacity: [0, 1],
+            translateY: [10, 0],
+            duration: 300,
+            delay: anime.stagger(50),
+            easing: 'easeOutQuad'
+        });
+    }
+
+    selectOption(optionIndex) {
+        this.userAnswers[this.currentQuestionIndex] = optionIndex;
+        
+        // Actualizar visualización de opciones
+        const buttons = this.optionsContainer.querySelectorAll('.option-button');
+        buttons.forEach((button, index) => {
+            button.classList.remove('selected');
+            if (index === optionIndex) {
+                button.classList.add('selected');
+            }
+        });
+        
+        // Guardar estado
+        this.saveState();
+        
+        // En modo práctica, mostrar retroalimentación inmediata
+        if (this.testMode === 'practice') {
+            this.showPracticeFeedback();
+        }
+    }
+
+    showPracticeFeedback() {
+        const question = this.questions[this.currentQuestionIndex];
+        const selectedAnswer = this.userAnswers[this.currentQuestionIndex];
+        const isCorrect = selectedAnswer === question.correct;
+        
+        // Mostrar retroalimentación visual
+        const buttons = this.optionsContainer.querySelectorAll('.option-button');
+        buttons.forEach((button, index) => {
+            if (index === question.correct) {
+                button.classList.add('correct');
+            } else if (index === selectedAnswer && !isCorrect) {
+                button.classList.add('incorrect');
+            }
+        });
+        
+        // Mostrar explicación
+        this.showExplanation(question, isCorrect);
+    }
+
+    showExplanation(question, isCorrect) {
+        // Crear o actualizar el contenedor de explicación
+        let explanationDiv = document.getElementById('explanation');
+        if (!explanationDiv) {
+            explanationDiv = document.createElement('div');
+            explanationDiv.id = 'explanation';
+            explanationDiv.className = 'mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200';
+            this.questionText.parentNode.appendChild(explanationDiv);
+        }
+        
+        explanationDiv.innerHTML = `
+            <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                    <i class="fas ${isCorrect ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500'} text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-gray-900 mb-2">
+                        ${isCorrect ? '¡Correcto!' : 'Respuesta incorrecta'}
+                    </h4>
+                    <p class="text-gray-700 mb-2">${question.explanation}</p>
+                    <p class="text-sm text-gray-600">
+                        <strong>Fuente:</strong> 
+                        <a href="${question.source}" target="_blank" class="text-blue-600 hover:underline">
+                            ${question.source}
+                        </a>
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        // Animación de aparición
+        anime({
+            targets: explanationDiv,
+            opacity: [0, 1],
+            translateY: [10, 0],
+            duration: 300,
+            easing: 'easeOutQuad'
+        });
+    }
+
+    nextQuestion() {
+        if (this.currentQuestionIndex < this.questions.length - 1) {
+            this.currentQuestionIndex++;
+            this.loadQuestion();
+            this.saveState();
+        } else {
+            this.completeTest();
+        }
+    }
+
+    previousQuestion() {
+        if (this.currentQuestionIndex > 0) {
+            this.currentQuestionIndex--;
+            this.loadQuestion();
+            this.saveState();
+        }
+    }
+
+    toggleMarkQuestion() {
+        const questionId = this.currentQuestionIndex;
+        const markIndex = this.markedQuestions.indexOf(questionId);
+        
+        if (markIndex > -1) {
+            this.markedQuestions.splice(markIndex, 1);
+        } else {
+            this.markedQuestions.push(questionId);
+        }
+        
+        this.updateMarkButton();
+        this.saveState();
+    }
+
+    updateMarkButton() {
+        const isMarked = this.markedQuestions.includes(this.currentQuestionIndex);
+        this.markBtn.innerHTML = `<i class="fas fa-flag mr-2"></i>${isMarked ? 'Desmarcar' : 'Marcar'}`;
+        this.markBtn.className = isMarked ? 
+            'bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors' :
+            'bg-yellow-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-600 transition-colors';
+    }
+
+    updateNavigationButtons() {
+        this.prevBtn.disabled = this.currentQuestionIndex === 0;
+        
+        const isLastQuestion = this.currentQuestionIndex === this.questions.length - 1;
+        this.nextBtn.innerHTML = isLastQuestion ? 
+            'Finalizar<i class="fas fa-check ml-2"></i>' : 
+            'Siguiente<i class="fas fa-arrow-right ml-2"></i>';
+    }
+
+    updateProgress() {
+        const progress = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+        this.progressBar.style.width = `${progress}%`;
+    }
+
+    completeTest() {
+        this.testCompleted = true;
+        this.testStarted = false;
+        this.calculateResults();
+        this.showResults();
+        this.clearState();
+    }
+
+    calculateResults() {
+        let correctCount = 0;
+        
+        this.questions.forEach((question, index) => {
+            if (this.userAnswers[index] === question.correct) {
+                correctCount++;
+            }
+        });
+        
+        const totalQuestions = this.questions.length;
+        const incorrectCount = totalQuestions - correctCount;
+        const score = Math.round((correctCount / totalQuestions) * 100);
+        
+        this.results = {
+            correct: correctCount,
+            incorrect: incorrectCount,
+            total: totalQuestions,
+            score: score
+        };
+    }
+
+    showResults() {
+        this.testInterface.classList.add('hidden');
+        this.reviewInterface.classList.add('hidden');
+        this.resultsInterface.classList.remove('hidden');
+        
+        // Actualizar estadísticas
+        this.correctAnswersSpan.textContent = this.results.correct;
+        this.incorrectAnswersSpan.textContent = this.results.incorrect;
+        this.finalScoreSpan.textContent = `${this.results.score}%`;
+        
+        // Determinar color del score
+        if (this.results.score >= 80) {
+            this.finalScoreSpan.className = 'text-3xl font-bold text-green-600';
+        } else if (this.results.score >= 60) {
+            this.finalScoreSpan.className = 'text-3xl font-bold text-yellow-600';
+        } else {
+            this.finalScoreSpan.className = 'text-3xl font-bold text-red-600';
+        }
+        
+        // Animación de resultados
+        anime({
+            targets: this.resultsInterface,
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 500,
+            easing: 'easeOutQuad'
+        });
+        
+        anime({
+            targets: '.text-3xl',
+            scale: [0.8, 1],
+            duration: 600,
+            delay: anime.stagger(100),
+            easing: 'easeOutBack'
+        });
+    }
+
+    showReview() {
+        this.resultsInterface.classList.add('hidden');
+        this.reviewInterface.classList.remove('hidden');
+        
+        // Generar contenido de revisión
+        this.reviewContainer.innerHTML = '';
+        
+        this.questions.forEach((question, index) => {
+            const userAnswer = this.userAnswers[index];
+            const isCorrect = userAnswer === question.correct;
+            
+            const reviewCard = document.createElement('div');
+            reviewCard.className = 'mb-6 p-6 bg-gray-50 rounded-lg border-l-4 ' + 
+                (isCorrect ? 'border-green-500' : 'border-red-500');
+            
+            reviewCard.innerHTML = `
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        Pregunta ${index + 1}: ${question.question}
+                    </h3>
+                    <div class="mb-3">
+                        <p class="text-sm text-gray-600 mb-1">Tu respuesta:</p>
+                        <p class="font-medium ${isCorrect ? 'text-green-700' : 'text-red-700'}">
+                            ${userAnswer !== null ? question.options[userAnswer] : 'No respondida'}
+                        </p>
+                    </div>
+                    ${!isCorrect ? `
+                        <div class="mb-3">
+                            <p class="text-sm text-gray-600 mb-1">Respuesta correcta:</p>
+                            <p class="font-medium text-green-700">${question.options[question.correct]}</p>
+                        </div>
+                    ` : ''}
+                    <div class="mb-3">
+                        <p class="text-sm text-gray-600 mb-2">Explicación:</p>
+                        <p class="text-gray-700 text-sm">${question.explanation}</p>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <strong>Fuente:</strong> 
+                        <a href="${question.source}" target="_blank" class="text-blue-600 hover:underline">
+                            ${question.source}
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            this.reviewContainer.appendChild(reviewCard);
+        });
+        
+        // Animación de revisión
+        anime({
+            targets: this.reviewInterface,
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 500,
+            easing: 'easeOutQuad'
+        });
+        
+        anime({
+            targets: this.reviewContainer.children,
+            opacity: [0, 1],
+            translateX: [-20, 0],
+            duration: 400,
+            delay: anime.stagger(100),
+            easing: 'easeOutQuad'
+        });
+    }
+
+    resetTest() {
+        this.testStarted = false;
+        this.testCompleted = false;
+        this.currentQuestionIndex = 0;
+        this.userAnswers = [];
+        this.markedQuestions = [];
+        this.questions = [];
+        
+        // Ocultar todas las interfaces
+        this.testInterface.classList.add('hidden');
+        this.resultsInterface.classList.add('hidden');
+        this.reviewInterface.classList.add('hidden');
+        
+        // Limpiar estado guardado
+        this.clearState();
+        
+        // Mostrar pantalla inicial
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    saveState() {
+        const state = {
+            testStarted: this.testStarted,
+            testCompleted: this.testCompleted,
+            testMode: this.testMode,
+            currentQuestionIndex: this.currentQuestionIndex,
+            userAnswers: this.userAnswers,
+            markedQuestions: this.markedQuestions,
+            questions: this.questions,
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem('testState', JSON.stringify(state));
+    }
+
+    resumeTest(state) {
+        if (confirm('Tienes un test en progreso. ¿Deseas continuar?')) {
+            this.testStarted = state.testStarted;
+            this.testMode = state.testMode;
+            this.currentQuestionIndex = state.currentQuestionIndex;
+            this.userAnswers = state.userAnswers;
+            this.markedQuestions = state.markedQuestions;
+            this.questions = state.questions;
+            
+            this.showTestInterface();
+            this.loadQuestion();
+        } else {
+            this.clearState();
+        }
+    }
+
+    clearState() {
+        localStorage.removeItem('testState');
+    }
+}
+
+// Inicializar la aplicación cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    window.testApp = new TestApplication();
+    
+    // Animaciones iniciales
+    anime({
+        targets: '.card-hover',
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 600,
+        delay: anime.stagger(100),
+        easing: 'easeOutQuad'
+    });
+    
+    anime({
+        targets: '.gradient-text',
+        opacity: [0, 1],
+        scale: [0.9, 1],
+        duration: 800,
+        easing: 'easeOutQuad'
+    });
+});
+
+// Función para descargar resultados como PDF
+function downloadResultsPDF() {
+    // Esta función requeriría una librería como jsPDF
+    // Por ahora, mostramos una alerta
+    alert('Función de descarga de PDF no implementada en esta versión.');
+}
+
+// Función para compartir resultados
+function shareResults() {
+    if (navigator.share && window.testApp && window.testApp.results) {
+        navigator.share({
+            title: 'Resultados del Test MF0953_2',
+            text: `He completado el test de Montaje de Equipos Microinformáticos con una puntuación del ${window.testApp.results.score}%`,
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copiar al portapapeles
+        const text = `He completado el test de Montaje de Equipos Microinformáticos (MF0953_2) con una puntuación del ${window.testApp.results.score}%`;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Resultados copiados al portapapeles');
+        });
+    }
+}
