@@ -58,14 +58,17 @@
                 Test de Montaje de Equipos Microinformáticos
             </h1>
             <p class="text-xl text-gray-600 mb-8">
-                Prepara tu certificación MF0953_2 con 200 preguntas de nivel medio
+                Prepara tu certificación MF0953_2 con <span id="totalQuestionsText">200</span> preguntas de nivel medio
             </p>
-            <div class="flex justify-center space-x-4">
+            <div class="flex justify-center space-x-4 flex-wrap gap-4">
                 <button id="startTest" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                    <i class="fas fa-play mr-2"></i>Comenzar Test
+                    <i class="fas fa-play mr-2"></i>Comenzar Test Completo
+                </button>
+                <button id="reducedMode" class="bg-gradient-to-r from-orange-500 to-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    <i class="fas fa-list-check mr-2"></i>Modo Reducido (100)
                 </button>
                 <button id="practiceMode" class="bg-gradient-to-r from-green-500 to-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-teal-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                    <i class="fas fa-graduation-cap mr-2"></i>Modo Práctica
+                    <i class="fas fa-graduation-cap mr-2"></i>Modo Práctica (20)
                 </button>
             </div>
         </div>
@@ -79,7 +82,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-600">Total Preguntas</p>
-                        <p class="text-2xl font-bold text-gray-900">200</p>
+                        <p class="text-2xl font-bold text-gray-900" id="totalQuestionsCard">200</p>
                     </div>
                 </div>
             </div>

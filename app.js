@@ -17,6 +17,7 @@ class TestApplication {
     initializeElements() {
         // Botones principales
         this.startTestBtn = document.getElementById('startTest');
+        this.reducedModeBtn = document.getElementById('reducedMode');
         this.practiceModeBtn = document.getElementById('practiceMode');
         
         // Interfaces
@@ -52,6 +53,7 @@ class TestApplication {
 
     bindEvents() {
         this.startTestBtn.addEventListener('click', () => this.startTest('test'));
+        this.reducedModeBtn.addEventListener('click', () => this.startTest('reduced'));
         this.practiceModeBtn.addEventListener('click', () => this.startTest('practice'));
         this.prevBtn.addEventListener('click', () => this.previousQuestion());
         this.nextBtn.addEventListener('click', () => this.nextQuestion());
@@ -84,11 +86,16 @@ class TestApplication {
         this.userAnswers = [];
         this.markedQuestions = [];
         
-        // Cargar preguntas
+        // Cargar preguntas según el modo
         if (mode === 'test') {
-            this.questions = generateRandomTest(200);
+            // Modo test completo: todas las preguntas
+            this.questions = generateRandomTest(questionsDatabase.length);
+        } else if (mode === 'reduced') {
+            // Modo reducido: 100 preguntas aleatorias
+            this.questions = generateRandomTest(100);
         } else {
-            this.questions = questionsDatabase; // Todas las preguntas para práctica
+            // Modo práctica: 20 preguntas aleatorias
+            this.questions = generateRandomTest(20);
         }
         
         // Inicializar respuestas del usuario
@@ -497,6 +504,18 @@ class TestApplication {
 // Inicializar la aplicación cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     window.testApp = new TestApplication();
+    
+    // Actualizar el total de preguntas dinámicamente
+    const totalQuestions = questionsDatabase.length;
+    const totalQuestionsText = document.getElementById('totalQuestionsText');
+    const totalQuestionsCard = document.getElementById('totalQuestionsCard');
+    
+    if (totalQuestionsText) {
+        totalQuestionsText.textContent = totalQuestions;
+    }
+    if (totalQuestionsCard) {
+        totalQuestionsCard.textContent = totalQuestions;
+    }
     
     // Animaciones iniciales
     anime({
