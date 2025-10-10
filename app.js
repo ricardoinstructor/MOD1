@@ -128,6 +128,9 @@ class TestApplication {
     loadQuestion() {
         const question = this.questions[this.currentQuestionIndex];
         
+        // Ocultar el feedback de la pregunta anterior (modo práctica)
+        this.hidePracticeFeedback();
+        
         // Actualizar información de progreso
         this.currentQuestionSpan.textContent = this.currentQuestionIndex + 1;
         this.updateProgress();
@@ -248,6 +251,9 @@ class TestApplication {
             </div>
         `;
         
+        // Hacer visible el contenedor
+        explanationDiv.style.display = 'block';
+        
         // Animación de aparición
         anime({
             targets: explanationDiv,
@@ -255,6 +261,20 @@ class TestApplication {
             translateY: [10, 0],
             duration: 300,
             easing: 'easeOutQuad'
+        });
+    }
+    
+    hidePracticeFeedback() {
+        // Ocultar el contenedor de explicación si existe
+        const explanationDiv = document.getElementById('explanation');
+        if (explanationDiv) {
+            explanationDiv.style.display = 'none';
+        }
+        
+        // Eliminar las clases de feedback visual de las opciones
+        const buttons = this.optionsContainer.querySelectorAll('.option-button');
+        buttons.forEach(button => {
+            button.classList.remove('correct', 'incorrect');
         });
     }
 
