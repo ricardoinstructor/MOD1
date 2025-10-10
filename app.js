@@ -19,6 +19,7 @@ class TestApplication {
         this.startTestBtn = document.getElementById('startTest');
         this.reducedModeBtn = document.getElementById('reducedMode');
         this.practiceModeBtn = document.getElementById('practiceMode');
+        this.customModeBtn = document.getElementById('customMode');
         
         // Interfaces
         this.testInterface = document.getElementById('testInterface');
@@ -55,6 +56,7 @@ class TestApplication {
         this.startTestBtn.addEventListener('click', () => this.startTest('test'));
         this.reducedModeBtn.addEventListener('click', () => this.startTest('reduced'));
         this.practiceModeBtn.addEventListener('click', () => this.startTest('practice'));
+        this.customModeBtn.addEventListener('click', () => this.showCustomModeModal());
         this.prevBtn.addEventListener('click', () => this.previousQuestion());
         this.nextBtn.addEventListener('click', () => this.nextQuestion());
         this.markBtn.addEventListener('click', () => this.toggleMarkQuestion());
@@ -78,7 +80,7 @@ class TestApplication {
         }
     }
 
-    startTest(mode = 'test') {
+    startTest(mode = 'test', customQuestions = null) {
         this.testMode = mode;
         this.testStarted = true;
         this.testCompleted = false;
@@ -93,6 +95,10 @@ class TestApplication {
         } else if (mode === 'reduced') {
             // Modo reducido: 100 preguntas aleatorias
             this.questions = generateRandomTest(100);
+        } else if (mode === 'custom') {
+            // Modo personalizado: número de preguntas definido por el usuario
+            const numQuestions = customQuestions || 50;
+            this.questions = generateRandomTest(Math.min(numQuestions, questionsDatabase.length));
         } else {
             // Modo práctica: 20 preguntas aleatorias
             this.questions = generateRandomTest(20);
@@ -519,6 +525,109 @@ class TestApplication {
     clearState() {
         localStorage.removeItem('testState');
     }
+    
+    showCustomModeModal() {
+        // Crear modal para seleccionar el número de preguntas
+        const modal = document.createElement('div');
+        modal.id = 'customModeModal';
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+        
+        const maxQuestions = questionsDatabase.length;
+        
+        modal.innerHTML = `
+            <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-sliders-h mr-2 text-pink-600"></i>
+                        Modo Personalizado
+                    </h2>
+                    <button onclick="closeCustomModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Número de preguntas (1 - ${maxQuestions})
+                    </label>
+                    <input 
+                        type="number" 
+                        id="customQuestionsInput" 
+                        min="1" 
+                        max="${maxQuestions}" 
+                        value="50" 
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-lg font-semibold text-center"
+                    >
+                    <div class="mt-3">
+                        <input 
+                            type="range" 
+                            id="customQuestionsRange" 
+                            min="1" 
+                            max="${maxQuestions}" 
+                            value="50" 
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-pink-600"
+                        >
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-2">
+                        <span>1</span>
+                        <span>${maxQuestions}</span>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-pink-50 to-rose-50 rounded-lg p-4 mb-6">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-info-circle text-pink-600"></i>
+                        <span class="font-semibold text-gray-900">Recomendaciones:</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-1 ml-6">
+                        <li>• 20-30 preguntas: Práctica rápida</li>
+                        <li>• 50-70 preguntas: Sesión media</li>
+                        <li>• 100+ preguntas: Examen completo</li>
+                    </ul>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button 
+                        onclick="startCustomTest()" 
+                        class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-pink-600 hover:to-rose-700 transition-all transform hover:scale-105 shadow-lg"
+                    >
+                        <i class="fas fa-play mr-2"></i>Comenzar Test
+                    </button>
+                    <button 
+                        onclick="closeCustomModal()" 
+                        class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                    >
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Sincronizar input numérico con slider
+        const input = document.getElementById('customQuestionsInput');
+        const range = document.getElementById('customQuestionsRange');
+        
+        input.addEventListener('input', (e) => {
+            const value = Math.min(Math.max(parseInt(e.target.value) || 1, 1), maxQuestions);
+            e.target.value = value;
+            range.value = value;
+        });
+        
+        range.addEventListener('input', (e) => {
+            input.value = e.target.value;
+        });
+        
+        // Animación de entrada
+        anime({
+            targets: modal.querySelector('.bg-white'),
+            opacity: [0, 1],
+            scale: [0.8, 1],
+            duration: 300,
+            easing: 'easeOutQuad'
+        });
+    }
 }
 
 // Inicializar la aplicación cuando el DOM esté listo
@@ -576,6 +685,43 @@ function shareResults() {
         const text = `He completado el test de Montaje de Equipos Microinformáticos (MF0953_2) con una puntuación del ${window.testApp.results.score}%`;
         navigator.clipboard.writeText(text).then(() => {
             alert('Resultados copiados al portapapeles');
+        });
+    }
+}
+
+// Función para iniciar el test personalizado
+function startCustomTest() {
+    const input = document.getElementById('customQuestionsInput');
+    const numQuestions = parseInt(input.value) || 50;
+    
+    // Validar el número de preguntas
+    if (numQuestions < 1 || numQuestions > questionsDatabase.length) {
+        alert(`Por favor, ingresa un número entre 1 y ${questionsDatabase.length}`);
+        return;
+    }
+    
+    // Cerrar modal
+    closeCustomModal();
+    
+    // Iniciar test con el número personalizado
+    if (window.testApp) {
+        window.testApp.startTest('custom', numQuestions);
+    }
+}
+
+// Función para cerrar el modal personalizado
+function closeCustomModal() {
+    const modal = document.getElementById('customModeModal');
+    if (modal) {
+        anime({
+            targets: modal.querySelector('.bg-white'),
+            opacity: [1, 0],
+            scale: [1, 0.8],
+            duration: 200,
+            easing: 'easeInQuad',
+            complete: () => {
+                document.body.removeChild(modal);
+            }
         });
     }
 }
