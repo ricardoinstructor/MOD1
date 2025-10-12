@@ -3265,7 +3265,7 @@ const questionsDatabase = [
   {
     "id": 234,
     "category": "Chipsets y CPU",
-    "question": "¿Cuál es la nomenclatura típica de los procesadores Intel de la serie Core i5?",
+    "question": "¿Cuál es la nomenclatura típica de los procesadores Intel de la serie Core i5 de novena generación?",
     "options": [
       "i5-3XXX.",
       "i5-5XXX.",
@@ -3391,7 +3391,7 @@ const questionsDatabase = [
   {
     "id": 243,
     "category": "Chipsets y CPU",
-    "question": "¿Cuál es la nomenclatura típica de los procesadores Intel de la serie Core i3?",
+    "question": "¿Cuál es la nomenclatura típica de los procesadores Intel de la serie Core i3 de novena generación?",
     "options": [
       "i3-3XXX.",
       "i3-5XXX.",
