@@ -3629,7 +3629,7 @@ const questionsDatabase = [
   {
     "id": 260,
     "category": "Chipsets y CPU",
-    "question": "¿Cuál es la nomenclatura típica de los procesadores Intel de la serie Core i3?",
+    "question": "¿Cuál es la nomenclatura típica de los procesadores Intel de la serie Core i3 de novena generación?",
     "options": [
       "i3-3XXX.",
       "i3-5XXX.",
